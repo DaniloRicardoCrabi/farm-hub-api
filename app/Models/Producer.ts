@@ -1,7 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { v4 as uuidv4 } from 'uuid'
+import { BaseModel, beforeCreate, column } from '@ioc:Adonis/Lucid/Orm'
 
 export default class Producer extends BaseModel {
+  @beforeCreate()
+  public static async generateUuid(producer: Producer) {
+    producer.id = uuidv4()
+  }
+
   @column({ isPrimary: true })
   public id: String
 
