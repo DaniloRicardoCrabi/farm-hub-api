@@ -5,7 +5,7 @@ export default class extends BaseSchema {
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.uuid('id')
+      table.uuid('id').notNullable().primary()
       table.string('name').notNullable()
       table.string('state').notNullable()
       table.string('city').notNullable()
@@ -13,7 +13,12 @@ export default class extends BaseSchema {
       table.float('cultivable_hectares').notNullable()
       table.float('vegetated_hectares').notNullable()
       table.specificType('cultivated_crops', 'text[]').notNullable()
-      table.uuid('producer_id').references('id').inTable('producers').onDelete('CASCADE')
+      table
+        .uuid('producer_id')
+        .references('id')
+        .inTable('producers')
+        .onDelete('CASCADE')
+        .notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })
