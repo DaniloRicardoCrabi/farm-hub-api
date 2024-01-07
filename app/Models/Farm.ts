@@ -1,9 +1,9 @@
 import { v4 as uuid } from 'uuid'
 import { DateTime } from 'luxon'
-import { BaseModel, afterCreate, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, beforeCreate, column } from '@ioc:Adonis/Lucid/Orm'
 
 export default class Farm extends BaseModel {
-  @afterCreate()
+  @beforeCreate()
   public static async generateUuid(farm: Farm) {
     farm.id = uuid()
   }
