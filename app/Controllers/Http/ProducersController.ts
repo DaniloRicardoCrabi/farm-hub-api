@@ -74,9 +74,9 @@ export default class ProducersController {
     }
   }
 
-  public async show({ params, response }: HttpContextContract) {
+  public async show({ request, response }: HttpContextContract) {
     try {
-      const producer = await Producer.findOrFail(params.id)
+      const producer = await Producer.findOrFail(request.params().id)
 
       response.status(200)
       return {
@@ -85,33 +85,48 @@ export default class ProducersController {
       }
     } catch {
       response.status(404)
-      this.logger.error('Producer not found')
+      this.logger.error('Producer not found 2')
       return {
-        message: 'Producer not found',
+        message: 'Producer not found 2',
       }
     }
   }
 
-  public async update({ params, request, response }: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
     try {
       const data = request.body()
       const { name, email, state, city, document } = data
 
-      if (!cpf.isValid(document) && !cnpj.isValid(document)) {
-        this.logger.error('Requested update of producer with invalid document')
-        response.status(400)
-        return {
-          message: 'Producer not updated, document is invalid',
-        }
-      }
+      const producer = await Producer.findOrFail(request.params().id)
 
-      const producer = await Producer.findOrFail(params.id)
+      if (document && producer.document !== document) {
+        const producerWithDocumentAlreadyExists = await Producer.query()
+          .where('document', document)
+          .first()
+
+        if (producerWithDocumentAlreadyExists) {
+          this.logger.error('Requested update of producer with document already registered')
+          response.status(400)
+          return {
+            message: 'Producer with this document already registered',
+          }
+        }
+
+        if (!cpf.isValid(document) && !cnpj.isValid(document)) {
+          this.logger.error('Requested update of producer with invalid document')
+          response.status(400)
+          return {
+            message: 'Producer not updated, document is invalid',
+          }
+        }
+
+        producer.document = document
+      }
 
       producer.name = name
       producer.email = email
       producer.state = state
       producer.city = city
-      producer.document = document
 
       await producer.save()
 
@@ -120,18 +135,18 @@ export default class ProducersController {
         message: 'Producer updated successfully',
         data: producer,
       }
-    } catch {
+    } catch (error) {
       response.status(404)
-      this.logger.error('Producer not found')
+      this.logger.error('Producer not found ' + error)
       return {
         message: 'Producer not found',
       }
     }
   }
 
-  public async destroy({ params, response }: HttpContextContract) {
+  public async destroy({ request, response }: HttpContextContract) {
     try {
-      const producer = await Producer.findOrFail(params.id)
+      const producer = await Producer.findOrFail(request.params().id)
 
       await producer.delete()
 
