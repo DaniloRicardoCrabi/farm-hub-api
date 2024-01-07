@@ -1,30 +1,34 @@
 import { DateTime } from 'luxon'
 import { v4 as uuidv4 } from 'uuid'
-import { BaseModel, beforeCreate, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, beforeCreate, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import Farm from './Farm'
 
 export default class Producer extends BaseModel {
+  @hasMany(() => Farm)
+  public farms: HasMany<typeof Farm>
+
   @beforeCreate()
   public static async generateUuid(producer: Producer) {
     producer.id = uuidv4()
   }
 
   @column({ isPrimary: true })
-  public id: String
+  public id: string
 
   @column()
-  public name: String
+  public name: string
 
   @column()
-  public email?: String
+  public email?: string
 
   @column()
-  public state: String
+  public state: string
 
   @column()
-  public city: String
+  public city: string
 
   @column()
-  public document: String
+  public document: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
