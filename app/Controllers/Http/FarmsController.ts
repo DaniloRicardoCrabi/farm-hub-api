@@ -51,7 +51,11 @@ export default class FarmsController {
       const page = request.input('page', 1)
       const limit = request.input('limit', 10)
 
-      const farms = await Farm.query().preload('producer').paginate(page, limit)
+      const farms = await Farm.query()
+        .preload('producer')
+        .orderBy('name', 'asc')
+        .paginate(page, limit)
+
       farms.baseUrl('/farms')
 
       response.status(200)
