@@ -52,7 +52,11 @@ export default class ProducersController {
       const page = request.input('page', 1)
       const limit = request.input('limit', 10)
 
-      const producers = await Producer.query().orderBy('name', 'asc').paginate(page, limit)
+      const producers = await Producer.query()
+        .preload('farms')
+        .orderBy('name', 'asc')
+        .paginate(page, limit)
+      producers.baseUrl('/producers')
 
       response.status(200)
       return {
@@ -71,6 +75,8 @@ export default class ProducersController {
   public async show({ request, response }: HttpContextContract) {
     try {
       const producer = await Producer.findOrFail(request.params().id)
+
+      await producer.load('farms')
 
       response.status(200)
       return {

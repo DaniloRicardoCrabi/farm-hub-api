@@ -49,9 +49,9 @@ export default class FarmsController {
   public async index({ request, response }: HttpContextContract) {
     try {
       const page = request.input('page', 1)
-      const limit = request.input('limit', 1)
+      const limit = request.input('limit', 10)
 
-      const farms = await Farm.query().paginate(page, limit)
+      const farms = await Farm.query().preload('producer').paginate(page, limit)
       farms.baseUrl('/farms')
 
       response.status(200)
@@ -74,6 +74,8 @@ export default class FarmsController {
       if (!farm) {
         throw new NotFoundException('Farm not found')
       }
+
+      await farm.load('producer')
 
       response.status(200)
       return {

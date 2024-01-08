@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, beforeCreate, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import Producer from './Producer'
 
 export default class Farm extends BaseModel {
   @beforeCreate()
@@ -34,6 +35,9 @@ export default class Farm extends BaseModel {
 
   @column({ columnName: 'producer_id' })
   public producerId: string
+
+  @belongsTo(() => Producer, { foreignKey: 'producerId' })
+  public producer: BelongsTo<typeof Producer>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
