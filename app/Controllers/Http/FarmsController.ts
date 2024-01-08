@@ -6,13 +6,14 @@ import BadRequestException from 'App/Exceptions/BadRequestExeption'
 import NotFoundException from 'App/Exceptions/NotFoundExeption'
 import UpdateFarmValidator from 'App/Validators/Farm/UpdateFarmValidator'
 import StoreFarmValidator from 'App/Validators/Farm/StoreFarmValidator'
+import InternalServerException from 'App/Exceptions/InternalServerExeption'
 
 export default class FarmsController {
   private logger = Logger.child({
     name: 'FarmsController',
   })
   public async store({ request, response }: HttpContextContract) {
-    await request.validate(StoreFarmValidator)
+    const farmsDto = await request.validate(StoreFarmValidator)
 
     const producerId = request.params().producerId
 
@@ -21,8 +22,6 @@ export default class FarmsController {
     if (!producer) {
       throw new NotFoundException('Producer not found')
     }
-
-    const farmsDto = request.body()
 
     this.validateArea(
       farmsDto.totalHectares,
@@ -41,12 +40,9 @@ export default class FarmsController {
         data: farm,
       }
     } catch (error) {
-      console.log(error)
       this.logger.error('Error on creating farm ' + error)
-      response.status(error.status || 500)
-      return {
-        message: error.message ?? 'Error creating farm',
-      }
+      const message = error.message ?? 'Error on creating farm'
+      throw new InternalServerException(message)
     }
   }
 
@@ -64,30 +60,36 @@ export default class FarmsController {
         data: farms,
       }
     } catch (error) {
-      this.logger.error('Error fetch ' + error.stack)
-      response.status(500)
-      return {
-        message: 'Error farms fetching',
-      }
+      this.logger.error('Error on fetching farms ' + error.stack)
+      const message = error.message ?? 'Error on fetching farms'
+      const status = error.status ?? 500
+      throw new InternalServerException(message, status)
     }
   }
 
   public async show({ request, response }: HttpContextContract) {
-    const farm = await Farm.find(request.params().id)
+    try {
+      const farm = await Farm.find(request.params().id)
 
-    if (!farm) {
-      throw new NotFoundException('Farm not found')
-    }
+      if (!farm) {
+        throw new NotFoundException('Farm not found')
+      }
 
-    response.status(200)
-    return {
-      message: 'Farm retrieved successfully',
-      data: farm,
+      response.status(200)
+      return {
+        message: 'Farm retrieved successfully',
+        data: farm,
+      }
+    } catch (error) {
+      this.logger.error('Error on show farm ' + error.stack)
+      const message = error.message ?? 'Error on show farm'
+      const status = error.status ?? 500
+      throw new InternalServerException(message, status)
     }
   }
 
   public async update({ request, response }: HttpContextContract) {
-    await request.validate(UpdateFarmValidator)
+    const farmsDto = await request.validate(UpdateFarmValidator)
 
     const farm = await Farm.find(request.params().id)
 
@@ -95,15 +97,9 @@ export default class FarmsController {
       throw new NotFoundException('Farm not found')
     }
 
-    const farmsDto = request.body()
-
-    this.validateArea(
-      farmsDto.totalHectares,
-      farmsDto.cultivableHectares,
-      farmsDto.vegetatedHectares
-    )
-
     farm.merge(farmsDto)
+
+    this.validateArea(farm.totalHectares, farm.cultivableHectares, farm.vegetatedHectares)
 
     try {
       await farm.save()
@@ -115,10 +111,9 @@ export default class FarmsController {
       }
     } catch (error) {
       this.logger.error('Error on update farm ' + error.stack)
-      response.status(500)
-      return {
-        message: 'Error on update farm',
-      }
+      const message = error.message ?? 'Error on update farm'
+      const status = error.status ?? 500
+      throw new InternalServerException(message, status)
     }
   }
 
@@ -138,10 +133,9 @@ export default class FarmsController {
       }
     } catch (error) {
       this.logger.error('Error on delete farm ' + error.stack)
-      response.status(500)
-      return {
-        message: 'Error delete farm',
-      }
+      const message = error.message ?? 'Error on delete farm'
+      const status = error.status ?? 500
+      throw new InternalServerException(message, status)
     }
   }
 
