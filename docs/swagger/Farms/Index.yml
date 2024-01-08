@@ -1,0 +1,27 @@
+/api/v1/farms:
+  get:
+    tags:
+      - Fazendas
+    summary: Listagem de fazendas cadastradas com paginação.
+    description: Endpoint para listagem de fazendas cadastradas com paginação.
+    operationId: getFarms
+    parameters:
+      - name: page
+        in: query
+        description: Número da página a ser exibida.
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: limit
+        in: query
+        description: Número de registros por página.
+        required: false
+        schema:
+          type: integer
+          format: int64
+    responses:
+      '200':
+        description: Fazendas listadas com sucesso.
+      '500':
+        description: Erro interno do servidor.

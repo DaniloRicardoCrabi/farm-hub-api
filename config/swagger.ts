@@ -1,21 +1,22 @@
 import { SwaggerConfig } from '@ioc:Adonis/Addons/Swagger'
 
 export default {
-  uiEnabled: true, //disable or enable swaggerUi route
-  uiUrl: 'docs', // url path to swaggerUI
-  specEnabled: true, //disable or enable swagger.json route
+  uiEnabled: true,
+  uiUrl: 'docs',
+  specEnabled: true,
   specUrl: '/swagger.json',
 
-  middleware: [], // middlewares array, for protect your swagger docs and spec endpoints
+  middleware: [],
 
   options: {
     definition: {
       openapi: '3.0.0',
       info: {
-        title: 'Farm Hub Api Documentation',
+        title: 'Farm Hub API ',
         version: '1.0.0',
-        description:
-          'Api documentation for Farm Hub - This api is used for registering producers and farm. 🚜🚜🚀',
+        description: `Documentação dos endpoints da API para gerenciamento de cadastros de produtos e fazendas.
+		 Através desse recurso também é possivel obter informações relevantes 
+		 em relação a indicadores da base de dados 🚜🚜🚀`,
       },
     },
 
