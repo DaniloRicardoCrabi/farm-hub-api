@@ -21,16 +21,16 @@ export default class Farm extends BaseModel {
   @column()
   public city: string
 
-  @column()
+  @column({ columnName: 'total_hectares' })
   public totalHectares: number
 
-  @column()
+  @column({ columnName: 'cultivable_hectares' })
   public cultivableHectares: number
 
-  @column()
+  @column({ columnName: 'vegetated_hectares' })
   public vegetatedHectares: number
 
-  @column()
+  @column({ columnName: 'cultivated_crops' })
   public cultivatedCrops: string[]
 
   @column({ columnName: 'producer_id' })
@@ -39,9 +39,9 @@ export default class Farm extends BaseModel {
   @belongsTo(() => Producer, { foreignKey: 'producerId' })
   public producer: BelongsTo<typeof Producer>
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ columnName: 'created_at', autoCreate: true })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ columnName: 'updated_at', autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 }

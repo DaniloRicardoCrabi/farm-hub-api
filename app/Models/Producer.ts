@@ -30,9 +30,9 @@ export default class Producer extends BaseModel {
   @column()
   public document: string
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ columnName: 'created_at', autoCreate: true })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ columnName: 'updated_at', autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 }
