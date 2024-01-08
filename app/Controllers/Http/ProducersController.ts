@@ -2,6 +2,11 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Producer from 'App/Models/Producer'
 import Logger from '@ioc:Adonis/Core/Logger'
 import { cpf, cnpj } from 'cpf-cnpj-validator'
+import StoreProducerValidator from 'App/Validators/Producer/StoreProducerValidator'
+import BadRequestException from 'App/Exceptions/BadRequestExeption'
+import UpdateProducerValidator from 'App/Validators/Producer/UpdateProducerValidator'
+import NotFoundException from 'App/Exceptions/NotFoundExeption'
+import InternalServerException from 'App/Exceptions/InternalServerExeption'
 
 export default class ProducersController {
   private logger = Logger.child({
@@ -9,35 +14,24 @@ export default class ProducersController {
   })
 
   public async store({ request, response }: HttpContextContract) {
+    const producerDto = await request.validate(StoreProducerValidator)
+
+    const { document } = producerDto
+
+    if (!cpf.isValid(document) && !cnpj.isValid(document)) {
+      this.logger.error('Requested creation of producer with invalid document')
+      throw new BadRequestException('Producer not created, document is invalid')
+    }
+
+    const alreadyExists = await Producer.findBy('document', document)
+
+    if (alreadyExists) {
+      this.logger.error('Requested creation of producer with document already registered')
+      throw new BadRequestException('Producer with this document already registered')
+    }
+
     try {
-      const data = request.body()
-      const { name, email, state, city, document } = data
-
-      if (!cpf.isValid(document) && !cnpj.isValid(document)) {
-        this.logger.error('Requested creation of producer with invalid document')
-        response.status(400)
-        return {
-          message: 'Invalid document',
-        }
-      }
-
-      const alreadyExists = await Producer.findBy('document', document)
-
-      if (alreadyExists) {
-        this.logger.error('Requested creation of producer with document already registered')
-        response.status(400)
-        return {
-          message: 'Document already registered',
-        }
-      }
-
-      const producer = await Producer.create({
-        name,
-        email,
-        state,
-        city,
-        document,
-      })
+      const producer = await Producer.create(producerDto)
 
       response.status(201)
       return {
@@ -93,40 +87,36 @@ export default class ProducersController {
   }
 
   public async update({ request, response }: HttpContextContract) {
-    try {
-      const data = request.body()
-      const { name, email, state, city, document } = data
+    const updateProducerDto = await request.validate(UpdateProducerValidator)
+    const { document } = updateProducerDto
 
-      const producer = await Producer.findOrFail(request.params().id)
+    const producer = await Producer.find(request.params().id)
 
-      if (document && producer.document !== document) {
-        const producerWithDocumentAlreadyExists = await Producer.query()
-          .where('document', document)
-          .first()
+    if (!producer) {
+      this.logger.error('Producer not found')
+      throw new NotFoundException('Producer not found')
+    }
 
-        if (producerWithDocumentAlreadyExists) {
-          this.logger.error('Requested update of producer with document already registered')
-          response.status(400)
-          return {
-            message: 'Producer with this document already registered',
-          }
-        }
+    if (document && producer.document !== document) {
+      const producerWithDocumentAlreadyExists = await Producer.query()
+        .where('document', document)
+        .first()
 
-        if (!cpf.isValid(document) && !cnpj.isValid(document)) {
-          this.logger.error('Requested update of producer with invalid document')
-          response.status(400)
-          return {
-            message: 'Producer not updated, document is invalid',
-          }
-        }
-
-        producer.document = document
+      if (producerWithDocumentAlreadyExists) {
+        this.logger.error('Requested update of producer with document already registered')
+        throw new BadRequestException('Producer with this document already registered')
       }
 
-      producer.name = name
-      producer.email = email
-      producer.state = state
-      producer.city = city
+      if (!cpf.isValid(document) && !cnpj.isValid(document)) {
+        this.logger.error('Requested update of producer with invalid document')
+        throw new BadRequestException('Producer not updated, document is invalid')
+      }
+
+      producer.document = document
+    }
+
+    try {
+      producer.merge(updateProducerDto)
 
       await producer.save()
 
@@ -136,11 +126,9 @@ export default class ProducersController {
         data: producer,
       }
     } catch (error) {
-      response.status(404)
-      this.logger.error('Producer not found ' + error)
-      return {
-        message: 'Producer not found',
-      }
+      this.logger.error('Erro on update produces ' + error.stack)
+      const message = error.message ?? 'Error on update producer'
+      throw new InternalServerException(message)
     }
   }
 
