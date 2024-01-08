@@ -1,0 +1,46 @@
+/api/v1/producers:
+  post:
+    tags:
+      - Produtores
+    summary: Criação de produtores rurais
+    description: Endpoint para criar novos produtores rurais.
+      Requer informações básicas do produtor, como nome, cidade, estado e documento.
+    operationId: postProducers
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Nome do produtor.
+              email:
+                type: string
+                description: Email do produtor.
+              city:
+                type: string
+                description: Cidade do produtor.
+              state:
+                type: string
+                description: Estado do produtor.
+              document:
+                type: string
+                description: Número de documento do produtor.
+            required:
+              - name
+              - city
+              - state
+              - document
+          example:
+            name: "John Doe"
+            email: "john@gmai.com"
+            city: "Cityville"
+            state: "Stateville"
+            document: "310.568.150-78"
+    responses:
+      '200':
+        description: Producers successfully created
+      '500':
+        description: Internal server error
+
