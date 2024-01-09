@@ -3,6 +3,8 @@ import Producer from 'App/Models/Producer'
 import { cnpj } from 'cpf-cnpj-validator'
 
 export default class extends BaseSeeder {
+  public static order = 1
+
   public async run() {
     await Producer.createMany([
       {
