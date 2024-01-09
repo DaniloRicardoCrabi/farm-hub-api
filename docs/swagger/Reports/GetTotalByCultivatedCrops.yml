@@ -1,0 +1,55 @@
+/api/v1/reports/total-by-cultivated-crops:
+  get:
+    tags:
+      - Relatorios
+    summary: Relatório de área total cultivada por cultura
+    description: Endpoint para gerar relatório de área total cultivada por cultura.
+    operationId: getTotalByCultivatedCrops
+    responses:
+      '200':
+        description: Relatório gerado com sucesso.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      crop:
+                        type: string
+                        description: Nome da cultura.
+                      total_area:
+                        type: number
+                        description: Área total cultivada.
+                      total_area_formatted:
+                        type: string
+                        description: Área total cultivada formatada.
+                      percentage:
+                        type: number
+                        description: Porcentagem da área total cultivada.
+                      percentage_formatted:
+                        type: string
+                        description: Porcentagem da área total cultivada formatada.
+      '404':
+        description: Nenhum registro encontrado.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Mensagem de erro.
+      '500':
+        description: Erro interno do servidor.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Mensagem de erro.
