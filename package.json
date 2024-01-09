@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "node ace serve --watch",
+    "migration:run": "node ace migration:run",
+    "seed": "node ace db:seed",
     "build": "node ace build --production",
     "start": "node server.js",
     "test": "node ace test",
