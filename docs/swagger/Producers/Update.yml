@@ -4,7 +4,7 @@
       - Produtores
     summary: Busca de todos os produtores
     description: Endpoint para buscar todos os produtores cadastrados.
-    operationId: getProducers
+    operationId: updateProducers
     requestBody:  
       content:
         application/json:
