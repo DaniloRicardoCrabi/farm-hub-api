@@ -1,0 +1,21 @@
+/api/v1/farms/:id:
+  get:
+    tags:
+      - Fazendas
+    summary: Busca de fazenda por ID
+    description: Endpoint para busca de fazenda por ID
+    operationId: getFarmsById
+    parameters:
+      - name: id
+        in: path
+        description: ID da fazenda
+        required: true
+        schema:
+          type: uuid
+    responses:
+      '200':
+        description: Farm fetched successfully
+      '404':
+        description: Farm not found
+      '500':
+        description: Internal server error

@@ -1,0 +1,58 @@
+/api/v1/farms/:id:
+  put:
+    tags:
+      - Fazendas
+    summary: Atualiza uma fazenda
+    description: Endpoint para atualizar as informações de uma fazenda.
+    operationId: updateFarms
+    parameters:
+      - name: id
+        in: params
+        description: ID da fazenda.
+        required: true
+        schema:
+          type: uuid
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Nome da propriedade.
+              city:
+                type: string
+                description: Cidade da propriedade.
+              state:
+                type: string
+                description: Estado da propriedade.
+              totalHectares:
+                type: number
+                description: Área total da propriedade.
+              cultivatedHectares:
+                type: nuber
+                description: Área cultivada da propriedade.
+              vegetationHectares:
+                type: number
+                description: Área de vegetação da propriedade.
+              cultivatedCrops:
+                type: array
+                description: Culturas cultivadas na propriedade.
+                items:
+                  type: string
+          example:
+            name: "Ranch Farm 1 editado"
+            city: "Belo Horizonte"
+            state: "MG"
+            totalHectares: 1000
+            cultivatedHectares: 50
+            vegetationHectares: 50
+            cultivatedCrops: ["Milho", "Limão", "Laranja", "Soja"]
+    responses:
+      '200':
+        description: Farm updated successfully
+      '404':
+        description: Farm not found
+      '500':
+        description: Internal server error
