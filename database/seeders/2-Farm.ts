@@ -3,6 +3,8 @@ import Farm from 'App/Models/Farm'
 import Producer from 'App/Models/Producer'
 
 export default class extends BaseSeeder {
+  public static order = 2
+
   public async run() {
     const producers = await Producer.query().select('id')
 
