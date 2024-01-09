@@ -1,0 +1,39 @@
+/api/v1/producers/:id:
+  put:
+    tags:
+      - Produtores
+    summary: Busca de todos os produtores
+    description: Endpoint para buscar todos os produtores cadastrados.
+    operationId: updateProducers
+    requestBody:  
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Nome do produtor.
+              email:
+                type: string
+                description: Email do produtor.
+              city:
+                type: string
+                description: Cidade do produtor.
+              state:
+                type: string
+                description: Estado do produtor.
+              document:
+                type: string
+                description: Número de documento do produtor.
+          example:
+            name: "John Doe"
+            email: "john@gmail.com"
+            city: "Cityville"
+            state: "Stateville"
+            document: "310.568.150-78"
+    responses:
+      '200':
+        description: Producers successfully created
+      '500':
+        description: Internal server error

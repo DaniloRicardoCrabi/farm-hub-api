@@ -1,0 +1,14 @@
+/api/v1/producers/:id:
+  delete:
+    tags:
+      - Produtores
+    summary: Remoção de produtor por ID
+    description: Endpoint para remoção de produtor por ID.
+    operationId: deleteProducersById
+    parameters:
+      - name: id
+        in: path
+        description: ID do produtor.
+        required: true
+        type: integer
+        format: int32

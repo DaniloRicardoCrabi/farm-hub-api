@@ -1,0 +1,26 @@
+/api/v1/producers:
+  get:
+    tags:
+      - Produtores
+    summary: Busca de todos os produtores
+    description: Endpoint para buscar todos os produtores cadastrados.
+    operationId: getProducers
+    parameters:
+      - name: page
+        in: query
+        description: Page number
+        required: false
+        type: integer
+        format: int32
+      - name: limit
+        in: query
+        description: Number of items per page
+        required: false
+        type: integer
+        format: int32
+    responses:
+      '200':
+        description: Producers fetched successfully
+        schema:
+      '500':
+        description: Internal server error

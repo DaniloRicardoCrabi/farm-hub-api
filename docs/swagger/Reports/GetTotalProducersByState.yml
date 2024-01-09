@@ -1,0 +1,12 @@
+/api/v1/reports/total-producers-by-state:
+  get:
+    tags:
+      - Relatorios
+    summary: Relatório de área total cultivada por cultura
+    description: Endpoint para gerar relatório de área total cultivada por cultura.
+    operationId: getTotalProducersByState
+    responses:
+      '200':
+        description: Relatório gerado com sucesso.
+      '500':
+        description: Erro interno do servidor.

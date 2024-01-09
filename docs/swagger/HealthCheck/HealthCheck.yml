@@ -1,0 +1,12 @@
+/api/v1/health:
+  get:
+    tags:
+      - Health Check
+    summary: Health Check
+    description: Endpoint para verificar se a API está funcionando.
+    operationId: healthCheck
+    responses:
+      '200':
+        description: API funcionando.
+      '500':
+        description: Erro interno do servidor.
